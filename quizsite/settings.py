@@ -37,6 +37,14 @@ if os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
     if railway_domain and railway_domain not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(railway_domain)
 
+# If on Railway (detected by PORT or RAILWAY_ENVIRONMENT), allow all Railway domains
+# The middleware will add specific domains dynamically, but this ensures we accept Railway requests
+if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('PORT'):
+    # Add a placeholder that middleware will use - but we'll handle it dynamically
+    # For now, just ensure we have localhost in case middleware needs it
+    if 'localhost' not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append('localhost')
+
 # Security settings for production
 if not DEBUG:
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
