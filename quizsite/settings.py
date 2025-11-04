@@ -30,6 +30,13 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
+# Automatically add Railway domain if provided
+# Railway provides RAILWAY_PUBLIC_DOMAIN environment variable
+if os.environ.get('RAILWAY_PUBLIC_DOMAIN'):
+    railway_domain = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+    if railway_domain and railway_domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(railway_domain)
+
 # Security settings for production
 if not DEBUG:
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
@@ -54,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'quizsite.middleware.HealthcheckMiddleware',  # Handle healthcheck before SecurityMiddleware
+    'quizsite.middleware.RailwayAllowedHostsMiddleware',  # Handle Railway domains BEFORE SecurityMiddleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
