@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Soru {{ index }} / {{ total }}{% endblock %}
+
+{% block content %}
+<div class="quiz-layout">
+  <section class="question-area">
+    <div class="q-head">Soru {{ index }} / {{ total }}</div>
+    <div class="q-text">{{ q.text|linebreaks }}</div>
+
+    <form method="post" class="choices" id="answer-form">
+      {% csrf_token %}
+      {{ form.choice_id }}
+      
+      {% if feedback %}
+        <div class="feedback {{ feedback }}">
+          {% if feedback == 'correct' %}✓ Doğru!
+          {% else %}✗ Yanlış cevap verdin.
+          {% endif %}
+        </div>
+        {% if feedback == 'wrong' and correct_choice %}
+          <div class="correct-answer-box">
+            <strong>Doğru Cevap:</strong> {{ correct_choice.text }}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="status-info">Henüz işaretlenmedi</div>
+      {% endif %}
+    </form>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('answer-form');
+        const radios = form.querySelectorAll('input[type="radio"]');
+        const isAnswered = {% if is_answered %}true{% else %}false{% endif %};
+        const selectedId = {% if selected_id %}{{ selected_id }}{% else %}null{% endif %};
+        const feedback = '{{ feedback|default:"" }}';
+        const correctChoiceId = {% if correct_choice %}{{ correct_choice.id }}{% else %}null{% endif %};
+        
+        radios.forEach(function(radio) {
+          const li = radio.closest('li');
+          
+          if (isAnswered) {
+            // İşaretlendikten sonra devre dışı bırak
+            radio.disabled = true;
+            if (li) {
+              li.style.cursor = 'default';
+              li.style.pointerEvents = 'none';
+              
+              // Seçilen şık için işaretleme
+              if (selectedId && parseInt(radio.value) === parseInt(selectedId)) {
+                li.classList.add('selected-choice');
+                const label = li.querySelector('label');
+                if (label && !label.querySelector('.your-choice')) {
+                  const span = document.createElement('span');
+                  span.className = 'your-choice';
+                  span.textContent = ' (Senin seçimin)';
+                  label.appendChild(span);
+                }
+              }
+              
+              // Yanlışsa doğru cevabı işaretle
+              if (feedback === 'wrong' && correctChoiceId && parseInt(radio.value) === parseInt(correctChoiceId)) {
+                li.classList.add('correct-choice');
+                const label = li.querySelector('label');
+                if (label && !label.querySelector('.correct-mark')) {
+                  const span = document.createElement('span');
+                  span.className = 'correct-mark';
+                  span.textContent = ' ✓ Doğru Cevap';
+                  label.appendChild(span);
+                }
+              }
+            }
+          } else {
+            // İşaretlenmeden önce otomatik submit
+            radio.addEventListener('change', function() {
+              form.submit();
+            });
+          }
+        });
+      });
+    </script>
+
+    <div class="navigation-actions">
+      {% if index > 1 %}
+        <a href="{% url 'quiz:run_question' session.course.slug session.slug index|add:'-1' %}" class="btn prev-btn">← Önceki</a>
+      {% else %}
+        <span class="btn prev-btn disabled">← Önceki</span>
+      {% endif %}
+      
+      {% if index < total %}
+        <a href="{% url 'quiz:run_question' session.course.slug session.slug index|add:'1' %}" class="btn next-btn">Sonraki →</a>
+      {% else %}
+        <a href="{% url 'quiz:finish_attempt' session.course.slug session.slug %}" class="btn next-btn">Bitir →</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <aside class="sidebar">
+    <h3>Sınav gezintisi</h3>
+    <div class="nav-grid">
+      {% for i,state in states %}
+        <a href="{% url 'quiz:run_question' session.course.slug session.slug i %}"
+           class="nav-box {{ state }}">{{ i }}</a>
+      {% endfor %}
+    </div>
+    <a class="finish-link" href="{% url 'quiz:finish_attempt' session.course.slug session.slug %}">Uygulamayı bitir …</a>
+  </aside>
+</div>
+{% endblock %}
+

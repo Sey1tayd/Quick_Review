@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ session.title }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ session.course.title }} → {{ session.title }}</h1>
+<p>Toplam soru: {{ session.question_count }}</p>
+<form action="{% url 'quiz:start_attempt' session.course.slug session.slug %}" method="post">
+  {% csrf_token %}
+  <button class="btn primary">Sınavı Başlat</button>
+</form>
+{% endblock %}
+
+

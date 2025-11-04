@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Sonuçlar{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ session.title }} – Sonuç</h1>
+<div class="summary-cards">
+  <div class="card stat"><strong>Toplam</strong><span>{{ total }}</span></div>
+  <div class="card stat ok"><strong>Doğru</strong><span>{{ correct }}</span></div>
+  <div class="card stat fail"><strong>Yanlış</strong><span>{{ wrong }}</span></div>
+</div>
+
+<h2>Tüm Sorular ve Cevaplar</h2>
+<ol class="all-questions-list">
+  {% for item in all_questions %}
+    <li class="question-result {% if item.is_correct %}correct{% else %}wrong{% endif %}">
+      <div class="q">{{ item.question.text }}</div>
+      <div class="a">
+        <span class="label">Senin cevabın:</span> 
+        <mark class="{% if item.is_correct %}ok{% else %}fail{% endif %}">{{ item.your.text }}</mark>
+        {% if item.is_correct %}
+          <span class="result-badge correct-badge">✓ Doğru</span>
+        {% else %}
+          <span class="result-badge wrong-badge">✗ Yanlış</span>
+        {% endif %}
+      </div>
+      {% if not item.is_correct %}
+        <div class="a correct-answer">
+          <span class="label">Doğru cevap:</span> 
+          <mark class="ok">{{ item.correct.text }}</mark>
+        </div>
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>Henüz cevaplanmış soru yok.</li>
+  {% endfor %}
+</ol>
+
+{% if wrongs %}
+<h2>Yanlış Yaptıkların (Özet)</h2>
+<ol class="wrong-list">
+  {% for item in wrongs %}
+    <li>
+      <div class="q">{{ item.question.text }}</div>
+      <div class="a">Senin cevabın: <mark class="fail">{{ item.your.text }}</mark></div>
+      <div class="a">Doğru cevap: <mark class="ok">{{ item.correct.text }}</mark></div>
+    </li>
+  {% endfor %}
+</ol>
+{% endif %}
+
+<p><a class="btn" href="{% url 'quiz:course_list' %}">Ana sayfaya dön</a></p>
+{% endblock %}
+

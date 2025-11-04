@@ -1,0 +1,17 @@
+{% load static %}
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Quiz{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'quiz/styles.css' %}">
+</head>
+<body>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">© {% now "Y" %}</footer>
+</body>
+</html>
+

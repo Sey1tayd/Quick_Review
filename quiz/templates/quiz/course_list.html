@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Dersler{% endblock %}
+
+{% block content %}
+<div class="grid">
+  {% for c in courses %}
+  <section class="card course-card">
+    <h2>{{ c.title }}</h2>
+    <p>{{ c.description }}</p>
+    {% if c.sessions.all %}
+      <div class="sessions-grid">
+        {% for s in c.sessions.all %}
+          <form action="{% url 'quiz:start_attempt' c.slug s.slug %}" method="post" class="session-form">
+            {% csrf_token %}
+            <button type="submit" class="session-card">
+              <h3>{{ s.title }}</h3>
+              <p class="session-meta">{{ s.question_count }} soru</p>
+            </button>
+          </form>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="no-sessions">Henüz oturum yok.</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}
+
