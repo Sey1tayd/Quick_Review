@@ -16,8 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
+
+def healthcheck(request):
+    """Simple healthcheck endpoint for Railway"""
+    return HttpResponse("OK", status=200)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('health/', healthcheck, name='healthcheck'),
     path('', include('quiz.urls', namespace='quiz')),
 ]
