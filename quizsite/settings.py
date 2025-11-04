@@ -47,7 +47,10 @@ if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('PORT'):
 
 # Security settings for production
 if not DEBUG:
-    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    # Railway handles SSL termination, so we don't need SECURE_SSL_REDIRECT
+    # Configure proxy SSL header so Django knows requests are secure
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)  # Disabled for Railway
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=31536000, cast=int)
