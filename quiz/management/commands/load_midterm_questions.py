@@ -33,7 +33,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(f'Session already exists: {session.title}')
 
-        # All questions for Midterm (100 questions total)
+        # All questions for Midterm (91 questions total - duplicates removed)
         questions = [
             {
                 'text': 'What is a key advantage of software inspections as a verification technique compared to dynamic testing?',
@@ -226,16 +226,6 @@ class Command(BaseCommand):
                 'feedback': 'Incremental development reduces the cost of accommodating change and enables earlier delivery and feedback.'
             },
             {
-                'text': 'In Extreme Programming (XP), which of the following is a primary benefit of **Pair Programming**?',
-                'choices': [
-                    ('Spreading knowledge of the system across the development team', True),
-                    ('Limiting the number of people who can change a specific part of the code', False),
-                    ('Reducing the total working hours required for a software release', False),
-                    ('Ensuring strict separation of duties between developers', False),
-                ],
-                'feedback': 'Pair programming helps spread system knowledge across the team and serves as an immediate, informal code review.'
-            },
-            {
                 'text': 'What is the typical output of the architectural design process?',
                 'choices': [
                     ('Detailed user interface prototypes.', False),
@@ -276,16 +266,6 @@ class Command(BaseCommand):
                 'feedback': 'Accommodating change is difficult after the process is underway in the waterfall model.'
             },
             {
-                'text': 'A core benefit of **Test-first development** in agile methods is that it:',
-                'choices': [
-                    ('Eliminates the need for any further system-level or acceptance testing', False),
-                    ('Clarifies the requirements that need to be implemented', True),
-                    ('Allows the final user acceptance tests to be written by the development team alone', False),
-                    ('Reduces the project\'s reliance on automated testing tools', False),
-                ],
-                'feedback': 'Writing tests before the code itself helps clarify exactly what the new functionality is intended to do, ensuring it meets the requirements.'
-            },
-            {
                 'text': 'What is the core principle of Test-Driven Development (TDD)?',
                 'choices': [
                     ('All testing is driven by the user, who must approve every line of code.', False),
@@ -314,16 +294,6 @@ class Command(BaseCommand):
                     ('Verification is done by developers, while validation is done only by customers.', False),
                 ],
                 'feedback': 'Verification is: "Are we building the product right?" (i.e., the software conforms to its specification). Validation is: "Are we building the right product?" (i.e., the software does what the user really requires).'
-            },
-            {
-                'text': 'Agile methods are most successful for small, co-located teams. Which factor makes scaling these methods to large systems difficult?',
-                'choices': [
-                    ('The lack of any tools to support continuous integration', False),
-                    ('The requirement for only highly-skilled and experienced programmers', False),
-                    ('The difficulty in maintaining documentation and development team continuity over a long system lifetime', True),
-                    ('The inability to perform incremental delivery with large software products', False),
-                ],
-                'feedback': 'Long-lifetime systems require documentation, and team turnover over a long procurement/development time is a major challenge for agile\'s minimal documentation approach.'
             },
             {
                 'text': 'What is the primary purpose of a UML state diagram (or state machine model)?',
@@ -414,16 +384,6 @@ class Command(BaseCommand):
                     ('For aesthetic design purposes', False),
                 ],
                 'feedback': 'Dependability is crucial for critical systems because system failures can lead to economic losses, physical damage, or threats to human life.'
-            },
-            {
-                'text': 'The Extreme Programming (XP) practice of **Refactoring** primarily involves:',
-                'choices': [
-                    ('Anticipating future changes and designing the system architecture to accommodate them', False),
-                    ('Writing new unit tests after a new piece of functionality has been completely implemented', False),
-                    ('Continuously restructuring and improving the software code to keep it simple and maintainable', True),
-                    ('Redeveloping the entire system architecture once a year to reflect new technologies', False),
-                ],
-                'feedback': 'Refactoring is the continuous process of improving the code structure and clarity without changing its external behavior, making future changes easier.'
             },
             {
                 'text': 'When using graphical models to facilitate discussion about a proposed system, what is acceptable regarding the models?',
@@ -696,16 +656,6 @@ class Command(BaseCommand):
                 'feedback': 'Without periodic refactoring, structure degrades as increments accumulate.'
             },
             {
-                'text': 'In Scrum, the primary responsibility of the **ScrumMaster** is to:',
-                'choices': [
-                    ('Be the technical lead responsible for the entire system architecture design', False),
-                    ('Be the full-time representative of the end-user (the customer)', False),
-                    ('Ensure the Scrum process is followed and protect the development team from external interference', True),
-                    ('Define product features and prioritize the Product Backlog', False),
-                ],
-                'feedback': 'The ScrumMaster ensures the process is followed, guides the team, and protects them from outside interference.'
-            },
-            {
                 'text': 'Which system perspective models the dynamic behavior of the system and its responses to events?',
                 'choices': [
                     ('Behavioral perspective.', True),
@@ -714,16 +664,6 @@ class Command(BaseCommand):
                     ('Structural perspective.', False),
                 ],
                 'feedback': 'The behavioral perspective models the dynamic behavior of the system and its responses to events.'
-            },
-            {
-                'text': 'Unlike a plan-driven approach, the process outputs (deliverables) in agile development are:',
-                'choices': [
-                    ('Identical to those produced in a waterfall model', False),
-                    ('Decided through a process of continuous negotiation during development', True),
-                    ('Planned in detail before the project\'s implementation phase begins', False),
-                    ('Completely undocumented and not formally reviewed by stakeholders', False),
-                ],
-                'feedback': 'Plan-driven approaches define outputs in advance, but in agile, outputs are decided throughout the process via negotiation.'
             },
             {
                 'text': 'What is the main goal of software reengineering?',
@@ -866,16 +806,6 @@ class Command(BaseCommand):
                 'feedback': 'Integrity/independence and respecting confidentiality and IP are core principles of professional software engineering ethics.'
             },
             {
-                'text': 'According to the Agile Manifesto, which of the following is valued *more*?',
-                'choices': [
-                    ('Contract negotiation', False),
-                    ('Comprehensive documentation', False),
-                    ('Following a detailed plan', False),
-                    ('Working software', True),
-                ],
-                'feedback': 'The Agile Manifesto emphasizes working code delivered to the customer over extensive formal documentation.'
-            },
-            {
                 'text': 'Which sequence lists the SEI capability maturity levels from lowest to highest?',
                 'choices': [
                     ('Repeatable → Initial → Managed → Defined → Optimizing', False),
@@ -996,16 +926,6 @@ class Command(BaseCommand):
                 'feedback': 'Generic application architectures can be utilized as a starting point for architectural design and as a design checklist.'
             },
             {
-                'text': 'In Extreme Programming (XP), how frequently are increments typically delivered to customers?',
-                'choices': [
-                    ('Twice per year', False),
-                    ('Every two weeks', True),
-                    ('Several times per day', False),
-                    ('Once every six months', False),
-                ],
-                'feedback': 'XP is characterized by a high frequency of delivery to the customer.'
-            },
-            {
                 'text': 'Which statement about software costs over a system\'s lifetime is generally true?',
                 'choices': [
                     ('Maintenance costs often exceed development costs for long-lived systems', True),
@@ -1014,16 +934,6 @@ class Command(BaseCommand):
                     ('Costs are evenly split across phases', False),
                 ],
                 'feedback': 'Maintenance costs often exceed development costs for long-lived systems.'
-            },
-            {
-                'text': 'A defining characteristic of the agile development approach is that it often involves:',
-                'choices': [
-                    ('The frequent delivery of new software versions or increments', True),
-                    ('A single, monolithic deployment at the end of the project life cycle', False),
-                    ('Strict adherence to a detailed, pre-planned sequence of separate development stages', False),
-                    ('Producing a complete and stable set of requirements before any coding begins', False),
-                ],
-                'feedback': 'Agile development involves frequent delivery of new versions or increments for evaluation by stakeholders.'
             },
         ]
 
