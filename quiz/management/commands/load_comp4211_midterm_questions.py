@@ -762,7 +762,7 @@ class Command(BaseCommand):
                 'feedback': 'Due to the birthday paradox, collisions are expected after approximately 2^(n/2) trials.'
             },
             {
-                'text': 'Which property of hash functions makes it hard to find two different inputs with the same output?',
+                'text': 'Which property of hash functions makes it hard to find two different inputs with the same output? (Duplicate check)',
                 'choices': [
                     ('Second preimage resistance', False),
                     ('Collision resistance', True),
@@ -772,7 +772,7 @@ class Command(BaseCommand):
                 'feedback': 'Collision resistance ensures it is hard to find any x ≠ x\' with h(x) = h(x\').'
             },
             {
-                'text': 'Which curve is the Bitcoin standard for ECDSA?',
+                'text': 'Which curve is the Bitcoin standard for ECDSA? (Repeat)',
                 'choices': [
                     ('Ed25519', False),
                     ('Curve25519', False),
@@ -782,7 +782,7 @@ class Command(BaseCommand):
                 'feedback': 'secp256k1 is the Bitcoin standard for ECDSA.'
             },
             {
-                'text': 'What is a key benefit of Merkle trees in blockchain?',
+                'text': 'What is a key benefit of Merkle trees in blockchain? (Verification)',
                 'choices': [
                     ('Perform consensus', False),
                     ('Provide membership proofs of size O(log n)', True),
@@ -792,7 +792,7 @@ class Command(BaseCommand):
                 'feedback': 'Efficient membership proofs of size O(log n).'
             },
             {
-                'text': 'What effect describes a small change in input causing a huge change in hash output?',
+                'text': 'What effect describes a small change in input causing a huge change in hash output? (Review)',
                 'choices': [
                     ('Avalanche effect', True),
                     ('Butterfly effect', False),
