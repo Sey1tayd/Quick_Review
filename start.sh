@@ -16,6 +16,9 @@ python manage.py load_midterm_questions || echo "COMP3003 midterm questions load
 echo "Loading SAP midterm questions..."
 python manage.py load_sap_midterm_questions || echo "SAP midterm questions loading skipped (may already exist)"
 
+echo "Loading COMP3007 midterm questions..."
+python manage.py load_comp3007_midterm_questions || echo "COMP3007 midterm questions loading skipped (may already exist)"
+
 echo "Loading COMP4207 midterm questions..."
 python manage.py load_comp4207_midterm_questions || echo "COMP4207 midterm questions loading skipped (may already exist)"
 
