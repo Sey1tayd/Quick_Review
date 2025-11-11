@@ -1,5 +1,39 @@
+import re
 from django.core.management.base import BaseCommand
 from quiz.models import Course, Session, Question, Choice
+
+
+MATH_SENTENCE_KEYWORDS = [
+    " the ", " if ", " when ", " while ", " choose ", " pick ",
+    " select ", " use ", " using ", " ensures ", " ensure ",
+    " leads ", " causes ", " makes ", " requires ", " because ",
+    " where ", " such as ", " suppose ", " includes ", " includes",
+    " assumes ", " involves ", " allows ", " helps ", " defines ",
+    " describes ", " which ", " whose ", " more ", " less ", " near ",
+]
+
+
+def should_render_as_math(value: str) -> bool:
+    stripped = value.strip()
+    if not stripped:
+        return False
+    while stripped and stripped[0] in "([{" and stripped[-1] in ")]}":
+        stripped = stripped[1:-1].strip()
+    lower = stripped.lower()
+    if any(keyword in lower for keyword in MATH_SENTENCE_KEYWORDS):
+        return False
+    allowed_chars = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_\\^{}()[]+-=/*.,: θδλµαβγ∑Σ√|<>≥≤'’%\"")
+    if not all(ch in allowed_chars for ch in stripped):
+        return False
+    math_indicators = [
+        "=", "\\frac", "\\sum", "∑", "Σ", "√", "_", "^", "argmax",
+        "θ", "δ", "λ", "∂", "⊙"
+    ]
+    return any(ind in stripped for ind in math_indicators)
+
+
+def wrap_math(value: str) -> str:
+    return f"\\({value}\\)"
 
 
 class Command(BaseCommand):
@@ -693,25 +727,41 @@ class Command(BaseCommand):
         updated_count = 0
 
         for idx, q_data in enumerate(questions_data, start=1):
-            question = Question.objects.filter(
-                session=session,
-                text=q_data['text']
-            ).first()
+            original_text = q_data['text']
+            text = original_text
+
+            def replace_bracket_math(match):
+                inner = match.group(1).strip()
+                if should_render_as_math(inner):
+                    return f"[{wrap_math(inner)}]"
+                return match.group(0)
+
+            text = re.sub(r"\[(.*?)\]", replace_bracket_math, text, flags=re.S)
+
+            processed_choices = []
+            for choice_text, is_correct in q_data['choices']:
+                c_text = wrap_math(choice_text) if should_render_as_math(choice_text) else choice_text
+                processed_choices.append((c_text, is_correct))
+
+            question = Question.objects.filter(session=session, text=original_text).first()
+            if not question and original_text != text:
+                question = Question.objects.filter(session=session, text=text).first()
 
             if question:
                 question.order = idx
                 question.is_active = True
-                question.save(update_fields=['order', 'is_active'])
+                question.text = text
+                question.save(update_fields=['order', 'is_active', 'text'])
 
                 existing_choices = list(question.choices.all())
-                if len(existing_choices) == len(q_data['choices']):
-                    for choice, (choice_text, is_correct) in zip(existing_choices, q_data['choices']):
+                if len(existing_choices) == len(processed_choices):
+                    for choice, (choice_text, is_correct) in zip(existing_choices, processed_choices):
                         choice.text = choice_text
                         choice.is_correct = is_correct
                         choice.save(update_fields=['text', 'is_correct'])
                 else:
                     question.choices.all().delete()
-                    for choice_text, is_correct in q_data['choices']:
+                    for choice_text, is_correct in processed_choices:
                         Choice.objects.create(
                             question=question,
                             text=choice_text,
@@ -723,12 +773,12 @@ class Command(BaseCommand):
             else:
                 question = Question.objects.create(
                     session=session,
-                    text=q_data['text'],
+                    text=text,
                     order=idx,
                     is_active=True
                 )
 
-                for choice_text, is_correct in q_data['choices']:
+                for choice_text, is_correct in processed_choices:
                     Choice.objects.create(
                         question=question,
                         text=choice_text,
