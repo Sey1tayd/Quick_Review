@@ -831,7 +831,7 @@ class Command(BaseCommand):
                     ('Run go test -cover and it automatically opens an interactive pprof server.', False),
                     ('Run tests with a profile flag (e.g., go test -cpuprofile cpu.prof) and then analyze it using go tool pprof (optionally with a web UI).', True),
                     ('Use go run to generate cpu.prof; pprof reads it only during compilation.', False),
-                    ('Profiling is unnecessary if the benchmark average time per operation b.N is small.', False),
+                    ('Profiling is unnecessary if the benchmark average time per operation T/N is small.', False),
                 ]
             },
             {
@@ -1294,7 +1294,7 @@ class Command(BaseCommand):
                 ]
             },
             {
-                'text': 'When defining a variadic function in Go (e.g., func f(vals ...int)), how is the variadic parameter treated inside the function body?',
+                'text': 'When defining a variadic function in Go (e.g., func sum(nums ...int)), how is the variadic parameter treated inside the function body?',
                 'choices': [
                     ('It is treated as a slice of the specified type.', True),
                     ('It is treated as a single integer representing the sum.', False),
