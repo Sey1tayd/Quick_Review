@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "bash -c '/opt/venv/bin/python manage.py migrate || true && /opt/venv/bin/python manage.py createsuperuserauto || true && /opt/venv/bin/python manage.py load_midterm_questions || true && /opt/venv/bin/python manage.py load_sap_midterm_questions || true && /opt/venv/bin/python manage.py load_comp3007_midterm_questions || true && /opt/venv/bin/python manage.py load_comp4207_midterm_questions || true && /opt/venv/bin/python manage.py load_comp4211_midterm_questions || true && /opt/venv/bin/python manage.py collectstatic --noinput || true && exec /opt/venv/bin/gunicorn quizsite.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -'",
+    "startCommand": "bash -c '/opt/venv/bin/python manage.py migrate || true && /opt/venv/bin/python manage.py createsuperuserauto || true && /opt/venv/bin/python manage.py add_final_questions || true && /opt/venv/bin/python manage.py collectstatic --noinput || true && exec /opt/venv/bin/gunicorn quizsite.wsgi --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --access-logfile - --error-logfile -'",
     "healthcheckPath": "/health/",
     "healthcheckTimeout": 150,
     "restartPolicyType": "ON_FAILURE",
