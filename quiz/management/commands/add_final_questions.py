@@ -297,7 +297,7 @@ class Command(BaseCommand):
             {
                 'text': 'In modern programming, Rust and Go both discourage silent failures. What is the primary difference in how they structure error propagation?',
                 'choices': [
-                    ('Rust uses a Result type with the \'?\' operator, while Go uses explicit multiple return values (value, err).', True),
+                    ('Rust uses a Result <T, E> type with the \'?\' operator, while Go uses explicit multiple return values (v, err).', True),
                     ('Rust uses try-catch blocks for all exceptions, while Go uses global error signals.', False),
                     ('Go uses monadic error handling, while Rust relies on sentinel values like -1.', False),
                     ('Both languages use identical syntax for error propagation to ensure interoperability.', False),
@@ -529,12 +529,12 @@ class Command(BaseCommand):
                 ]
             },
             {
-                'text': 'In Go, an \'if\' statement can include an initialization statement, such as if err := f(); err != nil. What is the scope of the variable err?',
+                'text': 'In Go, an \'if\' statement can include an initialization statement, such as if n := getValue(); n < 0. What is the scope of the variable n?',
                 'choices': [
-                    ('The variable err is only visible within the \'if\', \'else if\', and \'else\' blocks of that statement.', True),
-                    ('The variable err remains in scope for the rest of the function.', False),
-                    ('The variable err is a package-level global variable.', False),
-                    ('The variable err is only visible in the condition check and not the block body.', False),
+                    ('The variable n is only visible within the \'if\', \'else if\', and \'else\' blocks of that statement.', True),
+                    ('The variable n remains in scope for the rest of the function.', False),
+                    ('The variable n is a package-level global variable.', False),
+                    ('The variable n is only visible in the condition check and not the block body.', False),
                 ]
             },
             {
@@ -772,7 +772,7 @@ class Command(BaseCommand):
                 ]
             },
             {
-                'text': 'Using a weighted scoring model for a project where simplicity > safety and fast iteration > safety, which language is likely to be the preferred choice?',
+                'text': 'Using a weighted scoring model for a project where w_simplicity = 0.40 and w_safety = 0.10, which language is likely to be the preferred choice?',
                 'choices': [
                     ('Go, because it optimizes for a simple mental model and fast iteration.', True),
                     ('Rust, because it provides the highest possible safety guarantees regardless of complexity.', False),
