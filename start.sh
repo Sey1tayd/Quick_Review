@@ -13,6 +13,15 @@ python manage.py createsuperuserauto || echo "Superuser creation skipped (may al
 echo "Loading final exam questions..."
 python manage.py add_final_questions || echo "Final exam questions loading skipped (may already exist)"
 
+echo "Loading COMP3003 questions..."
+python manage.py add_comp3003_questions || echo "COMP3003 questions loading skipped (may already exist)"
+
+echo "Loading COMP4207 questions..."
+python manage.py add_comp4207_questions || echo "COMP4207 questions loading skipped (may already exist)"
+
+echo "Loading COMP4211 questions..."
+python manage.py add_comp4211_questions || echo "COMP4211 questions loading skipped (may already exist)"
+
 echo "Collecting static files..."
 python manage.py collectstatic --noinput || echo "Static collection failed, continuing..."
 
