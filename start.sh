@@ -22,6 +22,9 @@ python manage.py add_comp4207_questions || echo "COMP4207 questions loading skip
 echo "Loading COMP4211 questions..."
 python manage.py add_comp4211_questions || echo "COMP4211 questions loading skipped (may already exist)"
 
+echo "Loading SAP questions..."
+python manage.py add_sap_questions || echo "SAP questions loading skipped (may already exist)"
+
 echo "Collecting static files..."
 python manage.py collectstatic --noinput || echo "Static collection failed, continuing..."
 
