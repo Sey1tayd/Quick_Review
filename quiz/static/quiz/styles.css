@@ -44,6 +44,9 @@ body{display:flex;flex-direction:column}
 .correct-mark{color:var(--ok);font-weight:600;margin-left:8px}
 .correct-answer-box{margin-top:12px;padding:12px;background:#e7f6ec;border:1px solid #cfe9d7;border-radius:8px;color:var(--ok)}
 .correct-answer-box strong{display:block;margin-bottom:4px}
+.explanation-box{margin-top:16px;padding:14px;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;border-left:4px solid #ffc107}
+.explanation-box strong{display:block;margin-bottom:8px;color:#856404;font-size:1.05em}
+.explanation-text{color:#856404;line-height:1.6;white-space:pre-wrap}
 .status-info{margin-top:12px;padding:10px;border-radius:8px;background:#f0f0f0;color:var(--muted);font-style:italic}
 .navigation-actions{display:flex;justify-content:space-between;margin-top:20px;gap:12px}
 .prev-btn{justify-self:flex-start}

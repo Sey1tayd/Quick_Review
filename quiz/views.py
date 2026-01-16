@@ -134,6 +134,7 @@ def run_question(request, course_slug, session_slug, index: int):
         "given_answer": given,
         "just_answered": just_answered,
         "next_url": next_url,
+        "auto_advance": session.course.slug == 'fiba',  # FIBA için otomatik geçme
     })
 
 

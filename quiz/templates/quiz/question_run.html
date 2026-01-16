@@ -22,6 +22,12 @@
             <strong>Doğru Cevap:</strong> {{ correct_choice.text }}
           </div>
         {% endif %}
+        {% if is_answered and q.explanation %}
+          <div class="explanation-box">
+            <strong>Açıklama:</strong>
+            <div class="explanation-text">{{ q.explanation|linebreaks }}</div>
+          </div>
+        {% endif %}
       {% else %}
         <div class="status-info">Henüz işaretlenmedi</div>
       {% endif %}
@@ -79,7 +85,17 @@
           }
         });
 
-        if (justAnswered && feedback === 'correct' && nextUrl) {
+        // Otomatik geçme - FIBA için her cevaptan sonra
+        const autoAdvance = {% if auto_advance %}true{% else %}false{% endif %};
+        if (justAnswered && nextUrl && autoAdvance) {
+          // Açıklama varsa biraz daha uzun bekle
+          const hasExplanation = {% if q.explanation %}true{% else %}false{% endif %};
+          const delay = hasExplanation ? 3000 : 1500;
+          setTimeout(function() {
+            window.location.href = nextUrl;
+          }, delay);
+        } else if (justAnswered && feedback === 'correct' && nextUrl) {
+          // Diğer kurslar için sadece doğru cevapta otomatik geç
           setTimeout(function() {
             window.location.href = nextUrl;
           }, 1000);

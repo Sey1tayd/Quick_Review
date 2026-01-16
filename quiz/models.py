@@ -36,6 +36,7 @@ class Question(models.Model):
     text = models.TextField()
     order = models.PositiveIntegerField(default=1)
     is_active = models.BooleanField(default=True)
+    explanation = models.TextField(blank=True, help_text="Açıklama ve yorum (cevap verildikten sonra gösterilir)")
 
     class Meta:
         ordering = ["order", "id"]
