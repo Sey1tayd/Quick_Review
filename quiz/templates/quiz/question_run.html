@@ -101,6 +101,13 @@
           }, 1000);
         }
       });
+
+        function confirmFinish(unanswered) {
+          if (unanswered > 0) {
+            return confirm(unanswered + ' soru cevaplanmadı. Yine de bitirmek istiyor musunuz?');
+          }
+          return true;
+        }
     </script>
 
     <div class="navigation-actions">
@@ -113,7 +120,8 @@
       {% if index < total %}
         <a href="{% url 'quiz:run_question' session.course.slug session.slug index|add:'1' %}" class="btn next-btn">Sonraki →</a>
       {% else %}
-        <a href="{% url 'quiz:finish_attempt' session.course.slug session.slug %}" class="btn next-btn">Bitir →</a>
+        <a href="{% url 'quiz:finish_attempt' session.course.slug session.slug %}" class="btn next-btn"
+           onclick="return confirmFinish({{ unanswered_count }})">Bitir →</a>
       {% endif %}
     </div>
   </section>
@@ -126,7 +134,8 @@
            class="nav-box {{ state }}">{{ i }}</a>
       {% endfor %}
     </div>
-    <a class="finish-link" href="{% url 'quiz:finish_attempt' session.course.slug session.slug %}">Uygulamayı bitir …</a>
+    <a class="finish-link" href="{% url 'quiz:finish_attempt' session.course.slug session.slug %}"
+       onclick="return confirmFinish({{ unanswered_count }})">Uygulamayı bitir …</a>
   </aside>
 </div>
 {% endblock %}

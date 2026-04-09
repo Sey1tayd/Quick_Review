@@ -7,26 +7,60 @@
   <div class="card stat"><strong>Toplam</strong><span>{{ total }}</span></div>
   <div class="card stat ok"><strong>Doğru</strong><span>{{ correct }}</span></div>
   <div class="card stat fail"><strong>Yanlış</strong><span>{{ wrong }}</span></div>
+  {% if unanswered %}
+  <div class="card stat skip"><strong>Boş</strong><span>{{ unanswered }}</span></div>
+  {% endif %}
+  <div class="card stat score"><strong>Başarı</strong><span>%{{ percentage }}</span></div>
+</div>
+
+{% if unanswered %}
+<div class="unanswered-warning">
+  ⚠ {{ unanswered }} soru cevaplanmadı.
+</div>
+{% endif %}
+
+<div class="result-actions">
+  <form action="{% url 'quiz:start_attempt' session.course.slug session.slug %}" method="post" style="display:inline">
+    {% csrf_token %}
+    <button type="submit" class="btn primary">↺ Tekrar Dene</button>
+  </form>
+  <a class="btn ghost" href="{% url 'quiz:course_list' %}">Ana sayfaya dön</a>
 </div>
 
 <h2>Tüm Sorular ve Cevaplar</h2>
 <ol class="all-questions-list">
   {% for item in all_questions %}
-    <li class="question-result {% if item.is_correct %}correct{% else %}wrong{% endif %}">
+    <li class="question-result {% if not item.answered %}unanswered{% elif item.is_correct %}correct{% else %}wrong{% endif %}">
       <div class="q">{{ item.question.text }}</div>
-      <div class="a">
-        <span class="label">Senin cevabın:</span> 
-        <mark class="{% if item.is_correct %}ok{% else %}fail{% endif %}">{{ item.your.text }}</mark>
-        {% if item.is_correct %}
-          <span class="result-badge correct-badge">✓ Doğru</span>
-        {% else %}
-          <span class="result-badge wrong-badge">✗ Yanlış</span>
+      {% if item.answered %}
+        <div class="a">
+          <span class="label">Senin cevabın:</span>
+          <mark class="{% if item.is_correct %}ok{% else %}fail{% endif %}">{{ item.your.text }}</mark>
+          {% if item.is_correct %}
+            <span class="result-badge correct-badge">✓ Doğru</span>
+          {% else %}
+            <span class="result-badge wrong-badge">✗ Yanlış</span>
+          {% endif %}
+        </div>
+        {% if not item.is_correct and item.correct %}
+          <div class="a correct-answer">
+            <span class="label">Doğru cevap:</span>
+            <mark class="ok">{{ item.correct.text }}</mark>
+          </div>
         {% endif %}
-      </div>
-      {% if not item.is_correct %}
-        <div class="a correct-answer">
-          <span class="label">Doğru cevap:</span> 
-          <mark class="ok">{{ item.correct.text }}</mark>
+        {% if item.question.explanation %}
+          <div class="explanation-box result-explanation">
+            <strong>Açıklama:</strong>
+            <div class="explanation-text">{{ item.question.explanation }}</div>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="a">
+          <span class="result-badge skip-badge">— Cevaplanmadı</span>
+          {% if item.correct %}
+            <span class="label" style="margin-left:8px">Doğru cevap:</span>
+            <mark class="ok">{{ item.correct.text }}</mark>
+          {% endif %}
         </div>
       {% endif %}
     </li>
@@ -48,6 +82,11 @@
 </ol>
 {% endif %}
 
-<p><a class="btn" href="{% url 'quiz:course_list' %}">Ana sayfaya dön</a></p>
+<div class="result-actions">
+  <form action="{% url 'quiz:start_attempt' session.course.slug session.slug %}" method="post" style="display:inline">
+    {% csrf_token %}
+    <button type="submit" class="btn primary">↺ Tekrar Dene</button>
+  </form>
+  <a class="btn ghost" href="{% url 'quiz:course_list' %}">Ana sayfaya dön</a>
+</div>
 {% endblock %}
-

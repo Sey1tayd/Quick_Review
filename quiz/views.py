@@ -120,6 +120,8 @@ def run_question(request, course_slug, session_slug, index: int):
             "session_slug": session_slug,
         })
 
+    unanswered_count = sum(1 for _, s in states if "blank" in s)
+
     return render(request, "quiz/question_run.html", {
         "session": session,
         "q": q,
@@ -134,54 +136,75 @@ def run_question(request, course_slug, session_slug, index: int):
         "given_answer": given,
         "just_answered": just_answered,
         "next_url": next_url,
+        "unanswered_count": unanswered_count,
         "auto_advance": session.course.slug == 'fiba',  # FIBA için otomatik geçme
     })
 
 
 def finish_attempt(request, course_slug, session_slug):
     session = get_object_or_404(Session, course__slug=course_slug, slug=session_slug, is_published=True)
-    attempt = _get_or_create_attempt(request, session)
+
+    if not request.session.session_key:
+        request.session.create()
+    user = request.user if request.user.is_authenticated else None
+
+    # Mevcut attempt'i al (bitirilmiş olsa bile) — tekrar ziyarette boş attempt oluşturmayı önler
+    attempt = Attempt.objects.filter(
+        session=session,
+        user=user,
+        session_key="" if user else request.session.session_key,
+    ).order_by("-started_at").first()
+
+    if not attempt:
+        return redirect("quiz:session_detail", course_slug=course_slug, session_slug=session_slug)
+
     if not attempt.finished_at:
         attempt.finished_at = timezone.now()
         attempt.save(update_fields=["finished_at"])
 
-    # Tüm soruları ve cevapları getir
-    all_answers = (
-        attempt.answers
-        .select_related("question", "choice")
-        .prefetch_related("question__choices")
-        .order_by("question__order")
+    # Tüm aktif soruları getir (cevaplanmayanlar dahil)
+    all_qs = list(
+        session.questions.filter(is_active=True)
+        .prefetch_related("choices")
+        .order_by("order", "id")
     )
-    
-    # Yanlış cevapları ayrı liste
-    wrong_items = attempt.answers.filter(is_correct=False).select_related("question", "choice")
-    
-    wrongs_data = []
-    for a in wrong_items:
-        correct_choice = a.question.choices.filter(is_correct=True).first()
-        wrongs_data.append({
-            "question": a.question,
-            "your": a.choice,
-            "correct": correct_choice
-        })
-    
-    # Tüm sorular ve cevaplar
+    total = len(all_qs)
+
+    # Cevapları soru id'sine göre eşle
+    answers_map = {
+        a.question_id: a
+        for a in attempt.answers.select_related("choice")
+    }
+
     all_questions_data = []
-    for a in all_answers:
-        correct_choice = a.question.choices.filter(is_correct=True).first()
+    for q in all_qs:
+        a = answers_map.get(q.id)
+        correct_choice = q.choices.filter(is_correct=True).first()
         all_questions_data.append({
-            "question": a.question,
-            "your": a.choice,
+            "question": q,
+            "your": a.choice if a else None,
             "correct": correct_choice,
-            "is_correct": a.is_correct
+            "is_correct": a.is_correct if a else False,
+            "answered": a is not None,
         })
+
+    correct = sum(1 for d in all_questions_data if d["is_correct"])
+    wrong = sum(1 for d in all_questions_data if d["answered"] and not d["is_correct"])
+    answered = sum(1 for d in all_questions_data if d["answered"])
+    unanswered = total - answered
+    percentage = round(correct / total * 100) if total > 0 else 0
+
+    wrongs_data = [d for d in all_questions_data if d["answered"] and not d["is_correct"]]
 
     return render(request, "quiz/result_summary.html", {
         "session": session,
         "attempt": attempt,
-        "total": attempt.total_questions(),
-        "correct": attempt.correct_count(),
-        "wrong": attempt.wrong_count(),
+        "total": total,
+        "correct": correct,
+        "wrong": wrong,
+        "answered": answered,
+        "unanswered": unanswered,
+        "percentage": percentage,
         "wrongs": wrongs_data,
         "all_questions": all_questions_data,
     })
